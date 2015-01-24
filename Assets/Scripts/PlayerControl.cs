@@ -41,8 +41,8 @@ public class PlayerControl : MonoBehaviour
 		if(Input.GetButtonDown("Jump") && grounded)
 			jump = true;
 
-		if(Input.GetButtonDown("Jump") && grounded)
-			jump = true;
+//		if(Input.GetButtonDown("Jump") && grounded)
+//			jump = true;
 	}
 
 
