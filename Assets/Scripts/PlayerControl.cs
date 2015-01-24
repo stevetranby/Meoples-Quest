@@ -23,6 +23,11 @@ public class PlayerControl : MonoBehaviour
 	private bool grounded = false;			// Whether or not the player is grounded.
 	private Animator anim;					// Reference to the player's animator component.
 
+	public bool launchItem1;
+	public float launchSpeed;
+	public float cantUseTimer = 0;
+	public ItemPickup item1;
+	public ItemPickup item2;
 
 	void Awake()
 	{
@@ -41,8 +46,35 @@ public class PlayerControl : MonoBehaviour
 		if(Input.GetButtonDown("Jump") && grounded)
 			jump = true;
 
-//		if(Input.GetButtonDown("Jump") && grounded)
-//			jump = true;
+		if(Input.GetButtonUp("Fire1")) 
+		{
+			Debug.Log("Player Control Trying to Launch!" + Time.time);
+			if(item1 && cantUseTimer <= 0) {
+				Debug.Log("Launch!");
+				launchItem1 = true;
+
+				// check if using mouse?
+				if(Input.GetMouseButtonUp(0)) 
+				{
+					Debug.Log("mouse pressed!");
+					// get mouse direction and distrance from player
+					var p1 = this.transform.localPosition;
+					p1.z = 0;
+					var p2 = Input.mousePosition;
+					p2.z = 0;
+					p2 = Camera.main.ScreenToWorldPoint(p2);
+					var dirVec = p2 - p1;
+					var dist = Vector3.Distance(p1,p2);
+					Debug.Log("Distance from player = " + dist);
+					dist = Mathf.Clamp(dist, 5, 15);
+					launchSpeed = dist;
+				}
+			}
+		}
+
+		if(cantUseTimer > 0) {
+			cantUseTimer -= Time.deltaTime;
+		}
 	}
 
 
@@ -88,6 +120,34 @@ public class PlayerControl : MonoBehaviour
 
 			// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 			jump = false;
+		}
+
+		if(launchItem1) 
+		{
+			Debug.Log("Launching!");
+			// is item in hand?
+			item1.gameObject.transform.parent = null;
+			item1.gameObject.transform.localPosition = this.gameObject.transform.localPosition + Vector3.up * 1;
+
+			// Disable The Item's Physics
+			item1.GetComponent<Rigidbody2D>().isKinematic = false;
+			item1.GetComponent<BoxCollider2D>().enabled = true;
+			item1.GetComponent<CircleCollider2D>().isTrigger = true;
+			item1.GetComponent<CircleCollider2D>().enabled = true;
+
+			// make sure we can't pick up right away
+			item1.cantPickupTimer = .2f;
+
+			var itemRigidBody = item1.GetComponent<Rigidbody2D>();
+
+			var playerVelocity = this.GetComponent<Rigidbody2D>().velocity;
+			float vspeed = 1000f;
+			float hspeed = facingRight ? 100f : -100f;
+			itemRigidBody.velocity = playerVelocity;
+			itemRigidBody.AddForce(Vector2.up * vspeed + Vector2.right * hspeed);
+
+			item1 = null;
+			launchItem1 = false;
 		}
 	}
 	

@@ -12,12 +12,13 @@ public class PickupSpawner : MonoBehaviour
 
 
 	private PlayerHealth playerHealth;			// Reference to the PlayerHealth script.
-
+	private PlayerInventory playerInventory; 	//
 
 	void Awake ()
 	{
 		// Setting up the reference.
 		playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+		playerInventory = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInventory>();
 	}
 
 
