@@ -19,7 +19,12 @@ public class ItemPickup : MonoBehaviour
         inventory = GameObject.FindWithTag("Player").GetComponent<PlayerInventory>();
 //      anim = transform.root.GetComponent<Animator>();
     }
-    
+
+    public virtual void UseAction(GameObject player, bool facingRight)
+    {
+        // implement in base
+    }
+
     void Update()
     {
         // check if action button
@@ -80,17 +85,7 @@ public class ItemPickup : MonoBehaviour
         {
             Debug.Log("player inside item");
             playerInTrigger = other.gameObject;
-
-            // Get a reference to the player health script.
-//          PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-//          
-//          // Increasse the player's health by the health bonus but clamp it at 100.
-//          playerHealth.health += healthBonus;
-//          playerHealth.health = Mathf.Clamp(playerHealth.health, 0f, 100f);
-//          
-//          // Update the health bar.
-//          playerHealth.UpdateHealthBar();
-
+                  
             if (collect)
             {
                 AudioSource.PlayClipAtPoint(collect, transform.position);

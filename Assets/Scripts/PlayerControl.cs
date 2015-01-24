@@ -25,9 +25,10 @@ public class PlayerControl : MonoBehaviour
 
 	public bool launchItem1;
 	public float launchSpeed;
-	public float cantUseTimer = 0;
-	public ItemPickup item1;
-	public ItemPickup item2;
+	
+    public float cantUseTimer = 0;
+    public ItemPickup item1 = null;
+
 
 	void Awake()
 	{
@@ -77,7 +78,6 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
-
 	void FixedUpdate ()
 	{
 		// Cache the horizontal input.
@@ -125,26 +125,7 @@ public class PlayerControl : MonoBehaviour
 		if(launchItem1) 
 		{
 			Debug.Log("Launching!");
-			// is item in hand?
-			item1.gameObject.transform.parent = null;
-			item1.gameObject.transform.localPosition = this.gameObject.transform.localPosition + Vector3.up * 1;
-
-			// Disable The Item's Physics
-			item1.GetComponent<Rigidbody2D>().isKinematic = false;
-			item1.GetComponent<BoxCollider2D>().enabled = true;
-			item1.GetComponent<CircleCollider2D>().isTrigger = true;
-			item1.GetComponent<CircleCollider2D>().enabled = true;
-
-			// make sure we can't pick up right away
-			item1.cantPickupTimer = .2f;
-
-			var itemRigidBody = item1.GetComponent<Rigidbody2D>();
-
-			var playerVelocity = this.GetComponent<Rigidbody2D>().velocity;
-			float vspeed = 1000f;
-			float hspeed = facingRight ? 100f : -100f;
-			itemRigidBody.velocity = playerVelocity;
-			itemRigidBody.AddForce(Vector2.up * vspeed + Vector2.right * hspeed);
+            UseActionItem();			
 
 			item1 = null;
 			launchItem1 = false;
@@ -163,6 +144,27 @@ public class PlayerControl : MonoBehaviour
 		transform.localScale = theScale;
 	}
 
+    void Damaged(float healthBonus) 
+    {
+        // Get a reference to the player health script.
+        PlayerHealth playerHealth = GetComponent<PlayerHealth>();
+        
+        // Increasse the player's health by the health bonus but clamp it at 100.
+        playerHealth.health += healthBonus;
+        playerHealth.health = Mathf.Clamp(playerHealth.health, 0f, 100f);
+        
+        // Update the health bar.
+        playerHealth.UpdateHealthBar();
+    }
+
+    public void UseActionItem() 
+    {
+        // get item function script       
+        if(item1) {
+            item1.UseAction(this.gameObject, facingRight);
+            Damaged(-1f);
+        }
+    }
 
 	public IEnumerator Taunt()
 	{
@@ -174,7 +176,7 @@ public class PlayerControl : MonoBehaviour
 			yield return new WaitForSeconds(tauntDelay);
 
 			// If there is no clip currently playing.
-			if(!audio.isPlaying)
+			if(! audio.isPlaying)
 			{
 				// Choose a random, but different taunt.
 				tauntIndex = TauntRandom();

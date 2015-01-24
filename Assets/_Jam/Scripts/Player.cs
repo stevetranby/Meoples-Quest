@@ -26,6 +26,7 @@ public class Player : MonoBehaviour {
 	}
 
     void UseActiveItem() {
+
     }
 
     void PickupItem() {

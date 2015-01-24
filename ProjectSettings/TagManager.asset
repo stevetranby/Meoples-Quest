@@ -13,6 +13,12 @@ TagManager:
   - ExplosionFX
   - HealthBar
   - Minion
+  - Player2
+  - Player3
+  - Player4
+  - Player5
+  - Player6
+  - Player1
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -58,6 +64,10 @@ TagManager:
   - name: Background
     userID: 2
     uniqueID: 1535931219
+    locked: 0
+  - name: Ground
+    userID: 6
+    uniqueID: 2283094695
     locked: 0
   - name: Character
     userID: 4
