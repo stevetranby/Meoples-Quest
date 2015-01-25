@@ -4,7 +4,7 @@ using System.Collections;
 public class StoryTrigger : MonoBehaviour
 {
 
-    public int StoryID;
+    public string StoryName = "";
     public string Message = "";
     public string SpeechIcon = "";
     public GameObject[] SpeechIcons;
@@ -37,27 +37,19 @@ public class StoryTrigger : MonoBehaviour
 
             this.enabled = false;
 
-            // do story
-            if (StoryID == 3)
-            {
-                // perform cutscene balloon
-            } 
-            else
-            {
-                // show message bubbles
-
-                // play random clip
-                // Play the new taunt.
-                if (TalkingClips.Length > 0)
-                {
-                    int index = Random.Range(0, TalkingClips.Length);
-                    audio.clip = TalkingClips [index];
-                    audio.Play();
-                }
-            }
-
             Destroy(this.gameObject);
         }
-       
+        else if (other.tag == "Stick")
+        {
+            Debug.Log("story trigger activated!");
+            
+            var managerGo = GameObject.FindGameObjectWithTag("GameManager");
+            gmgr = managerGo.GetComponent<GameManager>();
+            gmgr.enterCutscene(this);
+            
+            this.enabled = false;
+            
+            Destroy(this.gameObject);
+        }
     }
 }
