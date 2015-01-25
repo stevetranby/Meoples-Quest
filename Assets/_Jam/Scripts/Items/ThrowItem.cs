@@ -23,10 +23,11 @@ public class ThrowItem : ItemPickup
         var itemRigidBody = this.GetComponent<Rigidbody2D>();
         
         var playerVelocity = this.GetComponent<Rigidbody2D>().velocity;
-        float vspeed = 1000f;
-        float hspeed = facingRight ? 100f : -100f;
+        float vspeed = 800f;
+        float hspeed = facingRight ? vspeed/2f : -vspeed/2f;
+        Debug.Log("throwing with force " + hspeed + "," + vspeed);
         itemRigidBody.velocity = playerVelocity;
-        itemRigidBody.AddForce(Vector2.up * vspeed + Vector2.right * hspeed);
+        itemRigidBody.AddForce(new Vector2(hspeed, vspeed));
 
         bool keepHolding = false;
         return keepHolding;

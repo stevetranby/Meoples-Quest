@@ -3,14 +3,13 @@ using System.Collections;
 
 public class InputManger : MonoBehaviour
 {
-    private GameObject currentPlayer;
     private GameManager gameManager;
 
     // Use this for initialization
     void Start()
     {
-        currentPlayer = GameObject.FindGameObjectWithTag("Player");
         gameManager = this.GetComponent<GameManager>();
+        gameManager.setActivePlayer(1);
     }
     
     // Update is called once per frame

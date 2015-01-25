@@ -5,8 +5,8 @@ using System.Collections.Generic;
 // TODO: make sure this can persist across level scenes?
 public class GameManager : MonoBehaviour {
 
-    private GameObject currentPlayer;
-    private List<GameObject> players;
+    public GameObject currentPlayer;
+    public List<GameObject> players;
 
 	// Use this for initialization
 	void Start () {

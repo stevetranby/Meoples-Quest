@@ -28,6 +28,6 @@ public class SpawnItemTrigger : ItemPickup {
 //                AudioSource.PlayClipAtPoint(fuse, transform.position);
             }
         }
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 }

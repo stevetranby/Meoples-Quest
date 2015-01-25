@@ -21,7 +21,7 @@ public class ItemPickup : MonoBehaviour
     void Awake()
     {
         // Setting up the references.
-        inventory = GameObject.FindWithTag("Player").GetComponent<PlayerInventory>();
+//        inventory = GameObject.FindWithTag("Player").GetComponent<PlayerInventory>();
         itemHUD = GameObject.Find("activeItemHUD").GetComponent<Image>();
 //      anim = transform.root.GetComponent<Animator>();
     }

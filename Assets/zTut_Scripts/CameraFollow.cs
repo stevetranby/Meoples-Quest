@@ -14,8 +14,9 @@ public class CameraFollow : MonoBehaviour
 
 	void Awake ()
 	{
-		// Setting up the reference.
-		playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+//		// Setting up the reference.
+//        var player = GameObject.FindGameObjectWithTag("Player");
+//        if(player) { playerTransform = player.transform; }
 	}
 
 	bool CheckXMargin()
@@ -37,6 +38,8 @@ public class CameraFollow : MonoBehaviour
 
 	void TrackPlayer ()
 	{
+        if(! playerTransform) { return; }
+
 		// By default the target x and y coordinates of the camera are it's current x and y coordinates.
 		float targetX = transform.position.x;
 		float targetY = transform.position.y;
