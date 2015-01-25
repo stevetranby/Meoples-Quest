@@ -8,7 +8,6 @@ public class PlayerControl : MonoBehaviour
 	[HideInInspector]
 	public bool jump = false;				// Condition for whether the player should jump.
 
-
 	public float moveForce = 365f;			// Amount of force added to move the player left and right.
 	public float maxSpeed = 5f;				// The fastest the player can travel in the x axis.
 	public AudioClip[] jumpClips;			// Array of clips for when the player jumps.
@@ -17,11 +16,17 @@ public class PlayerControl : MonoBehaviour
 	public float tauntProbability = 50f;	// Chance of a taunt happening.
 	public float tauntDelay = 1f;			// Delay for when the taunt should happen.
 
-
 	private int tauntIndex;					// The index of the taunts array indicating the most recent taunt.
 	private Transform groundCheck;			// A position marking where to check if the player is grounded.
 	private bool grounded = false;			// Whether or not the player is grounded.
 	private Animator anim;					// Reference to the player's animator component.
+
+
+
+    // Ladders
+    public bool insideLadderTrigger = false;
+    public bool isClimbing = false;
+    public bool climbingDirectionUp = true;
 
     public bool activateItem = false;
 	public float launchSpeed = 10f;
@@ -79,6 +84,17 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
+        // If trying to move vertically
+        isClimbing = false;
+        if(Mathf.Abs(Input.GetAxis("Vertical")) > 0)
+        {
+            if(insideLadderTrigger) 
+            {
+                isClimbing = true;
+                climbingDirectionUp = Input.GetAxis("Vertical") > 0;
+            }
+        } 
+
 		if(cantUseTimer > 0) {
 			cantUseTimer -= Time.deltaTime;
 		}
@@ -119,7 +135,14 @@ public class PlayerControl : MonoBehaviour
         }
 
 		// If the player should jump...
-		if(jump)
+		if(isClimbing)
+        {
+            // TODO: check this - rigidbody.isKinematic = false;
+            var p = gameObject.transform.localPosition;
+            gameObject.transform.localPosition = new Vector3(p.x, p.y + 10f * Time.deltaTime, 0);
+            //rigidbody2D.AddForce(new Vector2(0f, 10f));
+        }
+        else if(jump)
 		{
 			// Set the Jump animator trigger parameter.
 			anim.SetTrigger("Jump");
