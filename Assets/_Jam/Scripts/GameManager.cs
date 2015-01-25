@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject currentPlayer;
     public List<GameObject> players;
-    public bool inCutscene;
+    public bool inCutscene = false;
     private float cutSceneFailsafeTimer = 1f;
     private Text cutSceneMessageHUD;
     private StoryTrigger currentStory;
@@ -70,9 +70,7 @@ public class GameManager : MonoBehaviour
 
         // story props
         cutSceneMessageHUD.text = currentStory.Message;
-
-
-
+               
         // lever cutscene
         if(currentStory.StoryName == "intro") 
         {
