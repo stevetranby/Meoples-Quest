@@ -19,6 +19,8 @@ TagManager:
   - Player5
   - Player6
   - Player1
+  - Tool
+  - Spawner
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

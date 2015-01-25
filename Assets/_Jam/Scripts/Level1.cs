@@ -12,6 +12,7 @@ public class Level1 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // Spawn Characters
     }
     
     // Update is called once per frame

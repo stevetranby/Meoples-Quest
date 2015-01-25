@@ -1,23 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Rock : ItemPickup
+public class ThrowItem : ItemPickup
 {
-
-    // Use this for initialization
-    void Start()
+    public override bool UseAction(GameObject player, bool facingRight)
     {
-    
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
-    
-    }
-
-    public override void UseAction(GameObject player, bool facingRight)
-    {
+        Debug.Log("[throwitem] using actions");
         // throw
         // is item in hand?
         this.gameObject.transform.parent = null;
@@ -39,5 +27,8 @@ public class Rock : ItemPickup
         float hspeed = facingRight ? 100f : -100f;
         itemRigidBody.velocity = playerVelocity;
         itemRigidBody.AddForce(Vector2.up * vspeed + Vector2.right * hspeed);
+
+        bool keepHolding = false;
+        return keepHolding;
     }
 }

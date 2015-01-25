@@ -16,20 +16,25 @@ public class InputManger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonUp("Fire1"))
-        {
-            // Use Action
-            currentPlayer.GetComponent<PlayerControl>().UseActionItem();          
-        }
-        else if (Input.GetButtonUp("Fire2"))
-        {
-            // Use Action
-        }
-        else if (Input.GetButtonUp("Jump"))
-        {
-            // Use Action
-        }
-
+        // GameObjects handle action buttons themself for now
+//        if (Input.GetButtonUp("Fire1"))
+//        {
+//            var player = currentPlayer.GetComponent<PlayerControl>();
+//            if (player.item1)
+//            {
+//                // Use Action
+//                player.UseActionItem();          
+//            } else {
+//                // pickup item
+//
+//            }
+//        } else if (Input.GetButtonUp("Fire2"))
+//        {
+//            // Use Action
+//        } else if (Input.GetButtonUp("Jump"))
+//        {
+//            // Use Action
+//        }
 
         int playerIndex = 0;
         // TODO: refactor into dictionary map
@@ -37,29 +42,24 @@ public class InputManger : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             playerIndex = 1;
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha2))
+        } else if (Input.GetKeyUp(KeyCode.Alpha2))
         {
             playerIndex = 2;
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha3))
+        } else if (Input.GetKeyUp(KeyCode.Alpha3))
         {
             playerIndex = 3;
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha4))
+        } else if (Input.GetKeyUp(KeyCode.Alpha4))
         {
             playerIndex = 4;
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha5))
+        } else if (Input.GetKeyUp(KeyCode.Alpha5))
         {
             playerIndex = 5;
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha6))
+        } else if (Input.GetKeyUp(KeyCode.Alpha6))
         {
             playerIndex = 6;
         }
 
-        if(playerIndex > 0) 
+        if (playerIndex > 0)
         {
             Debug.Log("KEY UP: playerIndex = " + playerIndex);
             // switch player controlled

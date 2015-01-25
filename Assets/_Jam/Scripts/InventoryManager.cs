@@ -14,49 +14,49 @@ public class InventoryManager : MonoBehaviour {
         inventoryItems = new List<InventoryItem>();
         playerActiveItem = new Dictionary<GameObject, InventoryItem>();
 
-        // rock
-        {
-            var item = new InventoryItem();
-            item.itemId = "rockSmall";
-            item.title = "Small Rock";
-            item.iconName = "";
-            item.soundName = "";
-            inventoryItems.Add(item);
-        }
-
-        // rope
-        {
-            var item = new InventoryItem();
-            item.itemId = "rope";
-            item.title = "Rope";
-            item.iconName = "";
-            item.soundName = "";
-            inventoryItems.Add(item);
-        }
+//        // rock
+//        {
+//            var item = new InventoryItem();
+//            item.itemId = "rockSmall";
+//            item.title = "Small Rock";
+//            item.iconName = "";
+//            item.soundName = "";
+//            inventoryItems.Add(item);
+//        }
+//
+//        // rope
+//        {
+//            var item = new InventoryItem();
+//            item.itemId = "rope";
+//            item.title = "Rope";
+//            item.iconName = "";
+//            item.soundName = "";
+//            inventoryItems.Add(item);
+//        }
     }
 
     void CreateCraftItems()
     {
         craftableItems = new List<InventoryItem>();
 
-        // pickaxe
-        {
-            var item = new InventoryItem();
-            item.itemId = "pickaxe";
-            item.title = "Pick Axe";
-            item.iconName = "";
-            item.soundName = "";
-            craftableItems.Add(item);
-        }
-        // grappling hook
-        {
-            var item = new InventoryItem();
-            item.itemId = "grapplinghook";
-            item.title = "Grappling Hook";
-            item.iconName = "";
-            item.soundName = "";
-            craftableItems.Add(item);
-        }
+//        // pickaxe
+//        {
+//            var item = new InventoryItem();
+//            item.itemId = "pickaxe";
+//            item.title = "Pick Axe";
+//            item.iconName = "";
+//            item.soundName = "";
+//            craftableItems.Add(item);
+//        }
+//        // grappling hook
+//        {
+//            var item = new InventoryItem();
+//            item.itemId = "grapplinghook";
+//            item.title = "Grappling Hook";
+//            item.iconName = "";
+//            item.soundName = "";
+//            craftableItems.Add(item);
+//        }
     }
 
 	// Use this for initialization
