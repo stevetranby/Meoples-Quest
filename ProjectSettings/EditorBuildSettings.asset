@@ -11,3 +11,5 @@ EditorBuildSettings:
     path: Assets/_MainMenu/Menu.unity
   - enabled: 1
     path: Assets/_Jam/Scenes/Level1.unity
+  - enabled: 1
+    path: Assets/_EndGame/EndGame.unity

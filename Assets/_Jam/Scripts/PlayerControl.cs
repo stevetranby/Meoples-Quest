@@ -50,6 +50,7 @@ public class PlayerControl : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+	// Check for input here, handle elsewhere
     void Update()
     {
         // The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
@@ -66,23 +67,6 @@ public class PlayerControl : MonoBehaviour
             {
                 Debug.Log("Launch!");
                 activateItem = true;
-
-//              // check if using mouse?
-//              if(Input.GetMouseButtonUp(0)) 
-//              {
-//                  Debug.Log("mouse pressed!");
-//                  // get mouse direction and distrance from player
-//                  var p1 = this.transform.localPosition;
-//                  p1.z = 0;
-//                  var p2 = Input.mousePosition;
-//                  p2.z = 0;
-//                  p2 = Camera.main.ScreenToWorldPoint(p2);
-//                  var dirVec = p2 - p1;
-//                  var dist = Vector3.Distance(p1,p2);
-//                  Debug.Log("Distance from player = " + dist);
-//                  dist = Mathf.Clamp(dist, 5, 15);
-//                  launchSpeed = dist;
-//              }
             }
         }
 
@@ -105,6 +89,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+	// handle physics actions
     void FixedUpdate()
     {
         // Cache the horizontal input.

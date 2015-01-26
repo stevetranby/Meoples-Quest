@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject ropePostPrefab;
     public GameObject flamesPrefab;
+	public GameObject rocketExplosionPrefab;
 
     public GameObject currentPlayer;
     public List<GameObject> players;
@@ -38,161 +39,284 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.inCutscene)
-        {
-            //Debug.Log("cutscene time left: " + cutSceneFailsafeTimer);
-            // continue cutscene
-            //TODO: StartCoroutine();
-            if (cutSceneFailsafeTimer <= 0)
-            {
-                Debug.Log("cutscene time OVER!");
-                cutSceneFailsafeTimer = 0f;
-                this.exitCutscene();
-            }
-            cutSceneFailsafeTimer -= Time.deltaTime;
-        } 
+//        if (this.inCutscene)
+//        {
+//            //Debug.Log("cutscene time left: " + cutSceneFailsafeTimer);
+//            // continue cutscene
+//            //TODO: StartCoroutine();
+//            if (cutSceneFailsafeTimer <= 0)
+//            {
+//                Debug.Log("cutscene time OVER!");
+//                cutSceneFailsafeTimer = 0f;
+//                
+//            }
+//            cutSceneFailsafeTimer -= Time.deltaTime;
+//        } 
     }
 
     public void enterCutscene(StoryTrigger story)
     {
-        currentStory = story;
-        StartCoroutine("enterCutsceneCoroutine");
+		/*
+		 * storyIntro
+		 * storyNeedLever
+		 * storyDropRope
+		 * storyBalloonTakeOff
+		 * storyAirplaneTakeOff
+		 * storyRocketTakeOff
+		 */
+        
+		currentStory = story;
+
+		Debug.Log("enterting cutscene");
+		inCutscene = true;
+		removeCurrentPlayerControl();
+		cutSceneFailsafeTimer = currentStory.storyDuration;		
+		cutSceneMessageHUD.text = currentStory.Message;
+
+        StartCoroutine(currentStory.StoryName);
     }
 
-    public IEnumerator enterCutsceneCoroutine()
-    {
-        Debug.Log("enterting cutscene");
-        inCutscene = true;
+	public void AttachPlayersToCutscene(Transform transform, int num, bool horizontal) 
+	{
+		for(int i=0; i<num; i++) {
+			var player = players[i];
 
-        removeCurrentPlayerControl();
+			players[i].GetComponent<FollowTarget>().target = transform;
 
-        cutSceneFailsafeTimer = currentStory.storyDuration;
+			if(horizontal) {
+			players[i].GetComponent<FollowTarget>().offset = new Vector3(-.4f + .5f * i, 0f, 0f);
+			} else {
+				players[i].GetComponent<FollowTarget>().offset = new Vector3(0, -.4f + .5f * i, 0f);
+			}
 
-        // story props
-        cutSceneMessageHUD.text = currentStory.Message;
-               
-        // lever cutscene
-        if(currentStory.StoryName == "intro") 
-        {
-            // dialog
-            
-            yield return new WaitForSeconds(2.2f);
-        }
+			// disable physics
+			player.rigidbody2D.isKinematic = true;
+			players[i].GetComponent<BoxCollider2D>().enabled = false;
+			players[i].GetComponent<CircleCollider2D>().enabled = false;
+			players[i].GetComponent<PlayerControl>().enabled = false;
+		}
+	}
 
-        // lever cutscene
-        if(currentStory.StoryName == "need_lever") 
-        {
-            //setActivePlayer(1);
-            // follow camera instead
-            var follow = Camera.main.GetComponent<CameraFollow>();
-            follow.playerTransform = currentPlayer.transform;
-            var player = players[1];
-            if(player) {
-                follow.playerTransform = player.transform;
-            }
+	public void ResetPlayerControl(int num)
+	{
+		Debug.Log("resetting Players");
+		// Reset Players
+		for(int i=0; i<num; i++) {
+			var player = players[i];
 
-            yield return new WaitForSeconds(0.2f);                      
-        }
+			// fix position
+//			var pos = player.transform.position;
+//			player.transform.parent = null;
+//			player.transform.localPosition = pos;
+			players[i].GetComponent<FollowTarget>().target = null;
 
-        // lever cutscene
-        if(currentStory.StoryName == "drop_rope") 
-        {
-            var ropeItem = GameObject.Find("ropeItem");
-            Destroy(ropeItem);
-            yield return new WaitForSeconds(0.2f);
-            ropePostPrefab.SetActive(true);
-        }
 
-        // balloon scene
-        if(currentStory.StoryName == "balloon_takeoff") 
-        {   
-            var balloon = GameObject.Find("balloon").transform;
+			player.rigidbody2D.isKinematic = false; // false - use physics			
+			players[i].GetComponent<BoxCollider2D>().enabled = true;
+			players[i].GetComponent<CircleCollider2D>().enabled = true;
+		}
+	}
 
-            // follow balloon instead
-            var follow = Camera.main.GetComponent<CameraFollow>();
-            follow.playerTransform = currentPlayer.transform;
-            var player1 = players[0];
-            if(player1) {
-                follow.playerTransform = balloon.transform;
-            }
+	public IEnumerator storyIntro()
+	{
+		// TODO: dialog	
+		float duration = currentStory.storyDuration;
+		yield return new WaitForSeconds(duration);
 
-            // force players into balloon basket
-            var basketTransform = GameObject.Find("basket").transform;
-            for(int i=0; i<2; i++) {
-                var player = players[i];
-                player.transform.parent = basketTransform;
-                player.transform.localPosition = new Vector3(-.4f + .5f * i, 0f, 0f);
-                player.rigidbody2D.isKinematic = true;
+		this.exitCutscene();
+	}
 
-                var comp = players[i].GetComponent<PlayerControl>();
-//                comp.enabled = false;
-                Destroy(comp);
-            }
-            
-            yield return new WaitForSeconds(0.5f);
 
-            // TODO: create a script that updates using Lerp or other tween
-            // dialog and move balloon
-//            while( not at destination or next scene cut ) {
-//                  do lerp toward destination
-//            }
-            for(int i=0; i<200; i++) {
-                balloon.transform.Translate(new Vector3(-.1f,.1f,0));
-                basketTransform.Translate(new Vector3(-.1f,.1f,0));
-                Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + .3f, 1f, 10f);
-                yield return new WaitForEndOfFrame();// new WaitForSeconds(0.1f);
-            }
+	public IEnumerator storyNeedLever()
+	{
+		// follow camera instead
+		var follow = Camera.main.GetComponent<FollowTarget>();
+		follow.target = currentPlayer.transform;
+		var player = players[1];
+		if(player) {
+			follow.target = player.transform;
+		}
 
-            {
-                // spawn flames
-                GameObject flames = (GameObject)Instantiate(flamesPrefab, balloon.transform.localPosition , balloon.transform.localRotation);
-                flames.transform.parent = balloon.transform;
+		float duration = currentStory.storyDuration;
+		yield return new WaitForSeconds(duration);  
 
-                // TODO:  fade out balloon
+		this.exitCutscene();
+	}
 
-                yield return new WaitForSeconds(1f);               
-            }
+	public IEnumerator storyDropRope()
+	{
+		var ropeItem = GameObject.Find("ropeItem");
+		Destroy(ropeItem);
+		yield return new WaitForSeconds(0.2f);
+		ropePostPrefab.SetActive(true);
 
-            // drop basket
-            for(int i=0; i<150; i++) {
-                balloon.transform.Translate(new Vector3(0,.1f,0));
-                basketTransform.Translate(new Vector3(0,-.01f,0));
-                yield return new WaitForEndOfFrame();// new WaitForSeconds(0.1f);
-            }           
+		this.exitCutscene();
+	}
 
-            // destroy balloon
-            Destroy(balloon.gameObject);
-            yield return new WaitForEndOfFrame();
 
-            // TOOD: get from gameobject placeholder
-            var destination = GameObject.Find("basket_destination").transform.localPosition;
-            for(int i=0; i<200; i++) {
-                basketTransform.localPosition = Vector3.Lerp(basketTransform.localPosition, destination, i/20f);
-                Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - .1f, 3f, 10f);
-                yield return new WaitForEndOfFrame();
-            }
+	public IEnumerator storyBalloonTakeOff()
+	{
+		var balloon = GameObject.Find("balloon").transform;
 
-            Destroy(basketTransform.gameObject);
+		// follow balloon instead
+		var follow = Camera.main.GetComponent<FollowTarget>();	
+		follow.target = balloon.transform;
+		
+		// force players into balloon basket
+		var basketTransform = GameObject.Find("basket").transform;
+		AttachPlayersToCutscene(basketTransform, 2, true);
 
-            Debug.Log("resetting Players");
-            // Reset Players
-            for(int i=0; i<2; i++) {
-                var player = players[i];
-                var pos = player.transform.position;
-                player.transform.parent = null;
-                player.transform.localPosition = pos;
-                player.rigidbody2D.isKinematic = false; // use physics
+		yield return new WaitForSeconds(0.5f);
+		
+		// TODO: create a script that updates using Lerp or other tween
+		// dialog and move balloon
+		//            while( not at destination or next scene cut ) {
+		//                  do lerp toward destination
+		//            }
+		var destination = GameObject.Find("basket_destination").transform.localPosition;
+		var basketOrig = basketTransform.localPosition;
+		var basketDest = destination + new Vector3(0,.5f,0);
+		var balloonOrig = balloon.transform.localPosition;
+		var balloonDest = basketDest + (balloonOrig - basketOrig);
+		for(int i=0; i<400; i++) {
+			balloon.transform.localPosition = Vector3.Lerp(balloonOrig, balloonDest, (float)i/400f);
+			basketTransform.localPosition = Vector3.Lerp(basketOrig, basketDest, (float)i/400f);
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + .1f, 5f, 30f);
+			yield return new WaitForEndOfFrame();// new WaitForSeconds(0.1f);
+		}
+		
+		{
+			// spawn flames
+			GameObject flames = (GameObject)Instantiate(flamesPrefab, balloon.transform.localPosition , balloon.transform.localRotation);
+			flames.transform.parent = balloon.transform;
+			flames.transform.Translate(Vector3.left * 4f);
+			
+			// fade out balloon
+			var color = balloon.GetComponent<SpriteRenderer>().material.color; 
+			for(int i=0; i<200; i++) {
+				float alpha = (float)i / 200f;
+				color.a = (1f - alpha);
+				balloon.GetComponent<SpriteRenderer>().material.color = color;
+				yield return new WaitForEndOfFrame();
+			}
 
-                // TODO: should disable/enable
-//                var comp = players[i].GetComponent<PlayerControl>();
-//                comp.enabled = true;
+			//yield return new WaitForSeconds(1f);               
+		}
+		
+//		// drop basket
+//		// follow balloon instead
+//		Camera.main.GetComponent<FollowTarget>().target = basketTransform;
+//		for(int i=0; i<150; i++) {
+//
+//			basketTransform.Translate(new Vector3(0,-.01f,0));
+//			yield return new WaitForEndOfFrame();// new WaitForSeconds(0.1f);
+//		}           
+//		
 
-                players[i].AddComponent<PlayerControl>();
+		// target basket
+		Camera.main.GetComponent<FollowTarget>().target = basketTransform;
 
-                setActivePlayer(1);
-            }
-        }
-    }
+		// TOOD: get from gameobject placeholder
+		for(int i=0; i<200; i++) {
+			balloon.transform.Translate(new Vector3(0,.1f,0));
+			basketTransform.localPosition = Vector3.Lerp(basketTransform.localPosition, destination, (float)i/200f);
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - .1f, 5f, 30f);
+			yield return new WaitForEndOfFrame();
+		}
+		// destroy balloon
+		Destroy(balloon.gameObject);
+		yield return new WaitForEndOfFrame();
+		
+		ResetPlayerControl(2);
+
+		basketTransform.RotateAround(new Vector3(0,0,0), Vector3.forward, 90);
+		//Destroy(basketTransform.gameObject);
+
+		this.exitCutscene();
+	}
+
+
+	public IEnumerator storyPlaneTakeOff() 
+	{
+		var airplane = GameObject.Find("Airplane").transform;
+		
+		// follow balloon instead
+		var follow = Camera.main.GetComponent<FollowTarget>();
+		follow.target = airplane.transform;
+		
+		// force players into balloon basket
+		AttachPlayersToCutscene(airplane.transform, 4, true);
+		
+		yield return new WaitForSeconds(0.5f);
+
+		for(int i=0; i<100; i++) {
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + .2f, 5f, 100f);
+			yield return new WaitForEndOfFrame();
+		}
+
+		var airplaneOrig = airplane.localPosition;
+		var destination = GameObject.Find("airplane_destination").transform.localPosition;
+		for(int i=0; i<400; i++) {
+			airplane.localPosition = Vector3.Lerp(airplaneOrig, destination, (float)i/400f);
+			yield return new WaitForEndOfFrame();
+		}
+
+		for(int i=0; i<100; i++) {
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - .2f, 5f, 100f);
+			yield return new WaitForEndOfFrame();
+		}
+
+		airplane.gameObject.rigidbody2D.isKinematic = false;
+		airplane.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+		ResetPlayerControl(4);
+
+		this.exitCutscene();
+	}
+
+
+	public IEnumerator storyRocketTakeOff() 
+	{
+		var rocket = GameObject.Find("rocket").transform;
+
+		// follow balloon instead
+		var follow = Camera.main.GetComponent<FollowTarget>();
+		follow.target = rocket.transform;
+		
+		AttachPlayersToCutscene(rocket.transform, 6, false);
+		
+		yield return new WaitForSeconds(0.5f);
+		
+		// TOOD: get from gameobject placeholder
+		for(int i=0; i<200; i++) {
+			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + .1f, 5f, 100f);
+			yield return new WaitForEndOfFrame();
+		}
+		
+		// TOOD: get from gameobject placeholder
+		var rocketOrig = rocket.localPosition;
+		var destination = GameObject.Find("rocket_destination").transform.localPosition;
+		for(int i=0; i<100; i++) {
+			rocket.localPosition = Vector3.Lerp(rocketOrig, destination, (float)i/100f);
+			yield return new WaitForEndOfFrame();
+		}
+		
+		Debug.Log("end game!");
+		
+		yield return new WaitForSeconds(1.5f);
+		
+		var explode = (GameObject)Instantiate(rocketExplosionPrefab, rocket.localPosition, rocket.localRotation);
+		explode.GetComponent<Animator>().SetTrigger("RocketExplode");
+
+		Destroy(rocket.gameObject);
+		
+		yield return new WaitForSeconds(1f);
+		
+		Application.LoadLevel ("EndGame");
+
+		this.exitCutscene();
+	}
+
 
     public void exitCutscene()
     {
@@ -210,7 +334,7 @@ public class GameManager : MonoBehaviour
         } 
 
         var arrayIndex = playerNum - 1;
-        var player = arrayIndex < players.Count ? players [arrayIndex] : null;
+        var player = (arrayIndex < players.Count) ? players [arrayIndex] : null;
 
         Debug.Log("setting player " + arrayIndex + " to active!");
 
@@ -226,8 +350,8 @@ public class GameManager : MonoBehaviour
             {
                 control.enabled = true;
             }
-            var follow = Camera.main.GetComponent<CameraFollow>();
-            follow.playerTransform = currentPlayer.transform;
+			var follow = Camera.main.GetComponent<FollowTarget>();
+			follow.target = currentPlayer.transform;
         }
     }
 
