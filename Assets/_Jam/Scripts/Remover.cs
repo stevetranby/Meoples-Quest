@@ -33,12 +33,12 @@ public class Remover : MonoBehaviour
 			Instantiate(splash, col.transform.position, transform.rotation);
 
 			// Destroy the enemy.
-			Destroy (col.gameObject);	
+			Destroy (col.gameObject);
 		}
 	}
 
 	IEnumerator ReloadGame()
-	{			
+	{
 		// ... pause briefly
 		yield return new WaitForSeconds(2);
 		// ... and then reload the level.
