@@ -3,7 +3,7 @@
 ## Global Game Jam 2015
 
 # Info on how to play demo of game
-http://stevetranby.github.io/Meoples-Quest/
+http://stevetranby.github.io/meople-quest/
 
 # Credits
 Level Design & Level Art: Tom Gates
